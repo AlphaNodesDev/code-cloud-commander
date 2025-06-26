@@ -1,73 +1,78 @@
-# Welcome to your Lovable project
 
-## Project info
+# Full-Stack File Manager
 
-**URL**: https://lovable.dev/projects/df944e5f-bab0-478d-b509-67edde0509d9
+A complete file management system with frontend (React) and backend (Node.js) that allows you to upload, edit, and manage files with a built-in code editor and terminal.
 
-## How can I edit this code?
+## Features
 
-There are several ways of editing your application.
+- **File Upload**: Drag & drop files, folders, and ZIP archives
+- **Code Editor**: Built-in editor with syntax highlighting indicators
+- **Terminal**: Execute commands like `npm install`, `python`, etc.
+- **Real-time Updates**: WebSocket synchronization between frontend and backend
+- **File Operations**: Create, edit, delete, download files
+- **Directory Tree**: Navigate through file structure
+- **Search**: Find files quickly
 
-**Use Lovable**
+## Setup Instructions
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/df944e5f-bab0-478d-b509-67edde0509d9) and start prompting.
+### Backend Setup
 
-Changes made via Lovable will be committed automatically to this repo.
+1. Navigate to the backend directory:
+```bash
+cd backend
+```
 
-**Use your preferred IDE**
+2. Install dependencies:
+```bash
+npm install
+```
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+3. Start the backend server:
+```bash
+npm start
+```
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+The backend server will run on `http://localhost:5000`
 
-Follow these steps:
+### Frontend Setup
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+1. Install frontend dependencies (in the main directory):
+```bash
+npm install
+```
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
+2. Start the frontend development server:
+```bash
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+The frontend will run on `http://localhost:5173`
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+## Usage
 
-**Use GitHub Codespaces**
+1. **Upload Files**: Click "Upload" button or drag & drop files
+2. **Edit Files**: Click on any file in the directory tree to open the editor
+3. **Run Commands**: Click "Terminal" to open the command interface
+4. **Save Changes**: Files are automatically saved to the server
+5. **Real-time Sync**: Changes are synchronized across all connected clients
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+## API Endpoints
 
-## What technologies are used for this project?
+- `GET /api/files` - Get all files
+- `POST /api/upload` - Upload files
+- `POST /api/files/save` - Save file content
+- `DELETE /api/files/:path` - Delete file
+- `POST /api/execute` - Execute shell command
 
-This project is built with:
+## Security Notes
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+- Command execution is enabled for development
+- Add authentication for production use
+- Validate file uploads and command inputs
+- Use environment variables for configuration
 
-## How can I deploy this project?
+## File Storage
 
-Simply open [Lovable](https://lovable.dev/projects/df944e5f-bab0-478d-b509-67edde0509d9) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+- Files are stored in `backend/uploads/` directory
+- ZIP files are automatically extracted
+- Directory structure is preserved

@@ -2,6 +2,7 @@
 import React, { useCallback, useState } from 'react';
 import { Upload, File, X, CheckCircle } from 'lucide-react';
 import { FileNode } from '../types/FileManager';
+import { apiService } from '../services/api';
 
 interface FileUploadProps {
   onFilesUploaded: (files: FileNode[]) => void;
@@ -12,74 +13,29 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFilesUploaded }) => {
   const [uploading, setUploading] = useState(false);
   const [uploadedFiles, setUploadedFiles] = useState<string[]>([]);
 
-  const processFile = async (file: File, basePath: string = ''): Promise<FileNode[]> => {
-    const result: FileNode[] = [];
-    
-    if (file.name.endsWith('.zip')) {
-      // Handle ZIP files
-      try {
-        const JSZip = (await import('jszip')).default;
-        const zip = new JSZip();
-        const zipContent = await zip.loadAsync(file);
-        
-        for (const [relativePath, zipObject] of Object.entries(zipContent.files)) {
-          if (!zipObject.dir) {
-            const content = await zipObject.async('text');
-            result.push({
-              name: relativePath.split('/').pop() || '',
-              path: relativePath,
-              type: 'file',
-              size: content.length,
-              content: content,
-              lastModified: zipObject.date?.getTime() || Date.now()
-            });
-          }
-        }
-      } catch (error) {
-        console.error('Error processing ZIP file:', error);
-      }
-    } else {
-      // Handle regular files
-      const content = await file.text();
-      const path = basePath ? `${basePath}/${file.name}` : file.name;
-      
-      result.push({
-        name: file.name,
-        path: path,
-        type: 'file',
-        size: file.size,
-        content: content,
-        lastModified: file.lastModified
-      });
-    }
-    
-    return result;
-  };
-
   const handleFiles = async (fileList: FileList) => {
     setUploading(true);
-    const allFiles: FileNode[] = [];
-    const processedFileNames: string[] = [];
-
-    for (let i = 0; i < fileList.length; i++) {
-      const file = fileList[i];
-      try {
-        const processedFiles = await processFile(file);
-        allFiles.push(...processedFiles);
-        processedFileNames.push(file.name);
-      } catch (error) {
-        console.error(`Error processing file ${file.name}:`, error);
-      }
-    }
-
-    setUploadedFiles(processedFileNames);
-    onFilesUploaded(allFiles);
-    setUploading(false);
     
-    // Clear the uploaded files list after 3 seconds
-    setTimeout(() => {
-      setUploadedFiles([]);
-    }, 3000);
+    try {
+      const result = await apiService.uploadFiles(fileList);
+      
+      if (result.success) {
+        const processedFileNames = Array.from(fileList).map(file => file.name);
+        setUploadedFiles(processedFileNames);
+        onFilesUploaded(result.files);
+        
+        // Clear the uploaded files list after 3 seconds
+        setTimeout(() => {
+          setUploadedFiles([]);
+        }, 3000);
+      } else {
+        console.error('Upload failed:', result.error);
+      }
+    } catch (error) {
+      console.error('Upload error:', error);
+    } finally {
+      setUploading(false);
+    }
   };
 
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -144,7 +100,7 @@ const FileUpload: React.FC<FileUploadProps> = ({ onFilesUploaded }) => {
       {uploading && (
         <div className="flex items-center gap-2 p-3 bg-blue-50 rounded-md">
           <div className="animate-spin w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full"></div>
-          <span className="text-sm text-blue-700">Processing files...</span>
+          <span className="text-sm text-blue-700">Uploading files to server...</span>
         </div>
       )}
 
