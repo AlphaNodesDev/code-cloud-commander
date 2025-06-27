@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { Terminal as TerminalIcon, Play, X, Clear } from 'lucide-react';
+import { Terminal as TerminalIcon, Play, X, Trash2 } from 'lucide-react';
 import { apiService, CommandOutput } from '../services/api';
 
 interface TerminalProps {
@@ -84,7 +84,7 @@ const Terminal: React.FC<TerminalProps> = ({ onClose }) => {
             onClick={clearHistory}
             className="flex items-center gap-1 px-2 py-1 text-xs bg-gray-700 hover:bg-gray-600 rounded"
           >
-            <Clear className="w-3 h-3" />
+            <Trash2 className="w-3 h-3" />
             Clear
           </button>
           <button

@@ -1,5 +1,6 @@
 
 const API_BASE_URL = 'http://localhost:5000/api';
+const WS_URL = 'ws://localhost:5000';
 
 export interface ApiResponse<T = any> {
   success: boolean;
@@ -65,6 +66,34 @@ class ApiService {
     });
 
     return response.json();
+  }
+
+  // WebSocket connection helper
+  createWebSocket(onMessage: (data: any) => void): WebSocket {
+    const ws = new WebSocket(WS_URL);
+    
+    ws.onopen = () => {
+      console.log('WebSocket connected');
+    };
+
+    ws.onmessage = (event) => {
+      try {
+        const data = JSON.parse(event.data);
+        onMessage(data);
+      } catch (error) {
+        console.error('WebSocket message parsing error:', error);
+      }
+    };
+
+    ws.onclose = () => {
+      console.log('WebSocket disconnected');
+    };
+
+    ws.onerror = (error) => {
+      console.error('WebSocket error:', error);
+    };
+
+    return ws;
   }
 }
 
